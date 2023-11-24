@@ -19,16 +19,18 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 	lastRequestTime = time.Now()
+
 	// Log the request method and URL path
+	log.Printf("Received request: %s %s", r.Method, r.URL.Path)
 
 	// Read the request body
 	body, err := ioutil.ReadAll(r.Body)
-	log.Printf("Received request: %s %s,body: %s", r.Method, r.URL.Path, body)
 	if err != nil {
 		log.Printf("Failed to read request body: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("Body: %s", body)
 }
 
 func init() {

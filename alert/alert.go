@@ -8,9 +8,39 @@ import (
 	"time"
 )
 
-type MattermostMessage struct {
-	ChannelID string `json:"channel_id"`
+
+type AlertSender interface {
+	SendAlert(message string) error
+}
+
+type AlertMessage struct {
 	Message   string `json:"message"`
+}
+
+type MattermostSender struct {
+	ChannelID string
+}
+
+func (m *MattermostSender) SendAlert(message string) error {
+	msg := AlertMessage{
+		Message:   message,
+	}
+	b, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("Failed to marshal Mattermost message: %v", err)
+		return err
+	}
+	resp, err := http.Post("https://your-mattermost-server.com/api/v4/posts", "application/json", bytes.NewBuffer(b))
+	if err != nil {
+		log.Printf("Failed to send Mattermost alert: %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusCreated {
+		log.Printf("Failed to send Mattermost alert, status code: %d", resp.StatusCode)
+		return err
+	}
+	return nil
 }
 
 func SendMattermostAlert(duration time.Duration) {
@@ -33,3 +63,4 @@ func SendMattermostAlert(duration time.Duration) {
 		log.Printf("Failed to send Mattermost alert, status code: %d", resp.StatusCode)
 	}
 }
+
