@@ -22,3 +22,5 @@ receivers:
 
 # Run the Alertmanager container
 docker run -d -p 9093:9093 -v /tmp/alertmanager-data:/alertmanager prom/alertmanager --config.file=/alertmanager/alertmanager.yml
+
+docker run --name mattermost-preview -d --publish 8065:8065 mattermost/mattermost-preview

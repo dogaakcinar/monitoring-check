@@ -1,9 +1,9 @@
 package main
 
 import (
+	"doga/monitor"
 	"log"
 	"net/http"
-	"doga/monitor"
 )
 
 func main() {

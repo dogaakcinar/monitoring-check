@@ -5,62 +5,46 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 )
 
+var MattermostBaseUrl = "http://localhost:8065/hooks/"
 
 type AlertSender interface {
 	SendAlert(message string) error
 }
 
 type AlertMessage struct {
-	Message   string `json:"message"`
+	Message string `json:"message"`
 }
 
 type MattermostSender struct {
-	ChannelID string
+	HookID string
 }
 
 func (m *MattermostSender) SendAlert(message string) error {
 	msg := AlertMessage{
-		Message:   message,
+		Message: message,
 	}
 	b, err := json.Marshal(msg)
 	if err != nil {
 		log.Printf("Failed to marshal Mattermost message: %v", err)
 		return err
 	}
-	resp, err := http.Post("https://your-mattermost-server.com/api/v4/posts", "application/json", bytes.NewBuffer(b))
+	resp, err := http.Post(MattermostBaseUrl+m.HookID, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		log.Printf("Failed to send Mattermost alert: %v", err)
 		return err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusCreated {
-		log.Printf("Failed to send Mattermost alert, status code: %d", resp.StatusCode)
+		log.Printf("Failed to send Mattermost alert, status code: %d err: %v", resp.StatusCode, err)
 		return err
 	}
 	return nil
 }
 
-func SendMattermostAlert(duration time.Duration) {
-	msg := MattermostMessage{
-		ChannelID: "your-channel-id",
-		Message:   "No requests in the last " + duration.String(),
-	}
-	b, err := json.Marshal(msg)
-	if err != nil {
-		log.Printf("Failed to marshal Mattermost message: %v", err)
-		return
-	}
-	resp, err := http.Post("https://your-mattermost-server.com/api/v4/posts", "application/json", bytes.NewBuffer(b))
-	if err != nil {
-		log.Printf("Failed to send Mattermost alert: %v", err)
-		return
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusCreated {
-		log.Printf("Failed to send Mattermost alert, status code: %d", resp.StatusCode)
+func InitializeMattermostSender(HookID string) AlertSender {
+	return &MattermostSender{
+		HookID: HookID,
 	}
 }
-

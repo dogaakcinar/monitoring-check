@@ -42,7 +42,8 @@ func init() {
 			mu.Unlock()
 			if duration > 1*time.Minute {
 				log.Printf("No requests in the last %v", duration)
-				alert.SendMattermostAlert(duration)
+				ms := alert.InitializeMattermostSender("jnhq1erhftyz9dt7y7qzxcg38r")
+				ms.SendAlert("No requests in the last 1 minute.")
 			}
 		}
 	}()
