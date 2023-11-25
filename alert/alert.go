@@ -3,22 +3,22 @@ package alert
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
-
-var MattermostBaseUrl = "http://localhost:8065/hooks/"
 
 type AlertSender interface {
 	SendAlert(message string) error
 }
 
 type AlertMessage struct {
-	Message string `json:"message"`
+	Message string `json:"text"`
 }
 
 type MattermostSender struct {
-	HookID string
+	HookID    string
+	ServerUrl string
 }
 
 func (m *MattermostSender) SendAlert(message string) error {
@@ -30,21 +30,26 @@ func (m *MattermostSender) SendAlert(message string) error {
 		log.Printf("Failed to marshal Mattermost message: %v", err)
 		return err
 	}
-	resp, err := http.Post(MattermostBaseUrl+m.HookID, "application/json", bytes.NewBuffer(b))
+	fmt.Println(m.ServerUrl + m.HookID)
+	resp, err := http.Post(m.ServerUrl+m.HookID, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		log.Printf("Failed to send Mattermost alert: %v", err)
 		return err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusOK {
 		log.Printf("Failed to send Mattermost alert, status code: %d err: %v", resp.StatusCode, err)
 		return err
 	}
+
+	log.Println("Mattermost alert sent successfully")
+
 	return nil
 }
 
-func InitializeMattermostSender(HookID string) AlertSender {
+func InitializeMattermostSender(HookID string, ServerUrl string) AlertSender {
 	return &MattermostSender{
-		HookID: HookID,
+		HookID:    HookID,
+		ServerUrl: ServerUrl,
 	}
 }

@@ -1,0 +1,27 @@
+version: '3'
+services:
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./config/alertmanager.yaml:/alertmanager/alertmanager.yml"
+    command: "--config.file=/alertmanager/alertmanager.yml"
+    networks:
+      - monitor
+
+  mattermost:
+    image: mattermost/mattermost-preview
+    ports:
+      - "8065:8065"
+    networks:
+      - monitor
+    volumes:
+      - mattermost-data:/mattermost/data
+
+networks:
+  monitor:
+    driver: bridge
+
+volumes:
+  mattermost-data:
