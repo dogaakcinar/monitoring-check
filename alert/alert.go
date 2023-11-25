@@ -3,7 +3,6 @@ package alert
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -30,7 +29,6 @@ func (m *MattermostSender) SendAlert(message string) error {
 		log.Printf("Failed to marshal Mattermost message: %v", err)
 		return err
 	}
-	fmt.Println(m.ServerUrl + m.HookID)
 	resp, err := http.Post(m.ServerUrl+m.HookID, "application/json", bytes.NewBuffer(b))
 	if err != nil {
 		log.Printf("Failed to send Mattermost alert: %v", err)

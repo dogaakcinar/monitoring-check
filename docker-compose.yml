@@ -1,5 +1,10 @@
 version: '3'
 services:
+  monitoring-check:
+    image: docker.io/dogaakcinar/monitoring-check:latest
+    ports:
+      - "8080:8080"
+      
   alertmanager:
     image: prom/alertmanager
     ports:

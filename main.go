@@ -2,11 +2,8 @@ package main
 
 import (
 	"doga/monitor"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
-
 	"github.com/joho/godotenv"
 )
 
@@ -15,8 +12,6 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
-
-	fmt.Println(os.Getenv("ALERT_INTERVAL_SECOND"))
 
 	monitor.StartMonitor()
 

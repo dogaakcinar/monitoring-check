@@ -2,7 +2,7 @@ package monitor
 
 import (
 	"doga/alert"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +26,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received request: %s %s", r.Method, r.URL.Path)
 
 	// Read the request body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("Failed to read request body: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
