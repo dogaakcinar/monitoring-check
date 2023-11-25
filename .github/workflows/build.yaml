@@ -27,12 +27,14 @@ jobs:
         env:
           MATTERMOST_HOOK_ID: ${{ secrets.MATTERMOST_HOOK_ID }}
           MATTERMOST_SERVER_URL: ${{ secrets.MATTERMOST_SERVER_URL }}
+          IMAGE_PATH: "dogaakcinar/monitoring-check"
+          IMAGE_TAG: "latest"
         run: |
           docker buildx build \
             --platform linux/amd64 \
-            -t docker.io/your_username/your_image_name:latest \
+            -t docker.io/${{ env.IMAGE_PATH }}:${{ env.IMAGE_TAG }} \
             --build-arg MATTERMOST_HOOK_ID="${MATTERMOST_HOOK_ID}" \
             --build-arg MATTERMOST_SERVER_URL="${MATTERMOST_SERVER_URL}" \
             --build-arg ALERT_INTERVAL_SECOND="10" \
             .
-          docker push docker.io/dogaakcinar/monitoring-check:latest
+          docker push docker.io/${{ env.IMAGE_PATH}}:${{ env.IMAGE_TAG }}
