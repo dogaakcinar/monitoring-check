@@ -36,5 +36,4 @@ jobs:
             --build-arg MATTERMOST_HOOK_ID="${MATTERMOST_HOOK_ID}" \
             --build-arg MATTERMOST_SERVER_URL="${MATTERMOST_SERVER_URL}" \
             --build-arg ALERT_INTERVAL_SECOND="10" \
-            .
-          docker push docker.io/${{ env.IMAGE_PATH}}:${{ env.IMAGE_TAG }}
+            . --push
